@@ -228,9 +228,8 @@ struct sk_buff *__skb_recv_datagram(struct sock *sk, unsigned int flags,
 					continue;
 				}
 				
-				skb = skb_set_peeked(skb);
-				error = PTR_ERR(skb);
-				if (IS_ERR(skb))
+				error = skb_set_peeked(skb);
+				if (error)
 					goto unlock_err;
 				
 				atomic_inc(&skb->users);
@@ -257,7 +256,7 @@ struct sk_buff *__skb_recv_datagram(struct sock *sk, unsigned int flags,
 	return NULL;
 
 unlock_err:
-		spin_unlock_irqrestore(&queue->lock, cpu_flags);
+	spin_unlock_irqrestore(&queue->lock, cpu_flags);
 no_packet:
 	*err = error;
 	return NULL;
