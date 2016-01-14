@@ -361,6 +361,7 @@ int snd_timer_close(struct snd_timer_instance *timeri)
 		}
 		spin_unlock(&timer->lock);
 		spin_unlock_irq(&slave_active_lock);
+
 		/* release a card refcount for safe disconnection */
 		if (timer->card)
 			put_device(&timer->card->card_dev);
@@ -502,8 +503,6 @@ static int snd_timer_stop1(struct snd_timer_instance *timeri, bool stop)
 {
 	struct snd_timer *timer;
 	int result = 0;
-	unsigned long flags;
-
 	timer = timeri->timer;
 	if (!timer)
 		return -EINVAL;
