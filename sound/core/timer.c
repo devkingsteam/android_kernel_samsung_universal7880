@@ -486,8 +486,8 @@ if (timer->running) {
 snd_timer_notify1(timeri, start ? SNDRV_TIMER_EVENT_START :
 		  SNDRV_TIMER_EVENT_CONTINUE);
 unlock:
-spin_unlock_irqrestore(&timer->lock, flags);
-return result;
+	spin_unlock_irqrestore(&timer->lock, flags);
+	return result;
 }
 
 /* start/continue a slave timer */
