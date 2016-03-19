@@ -1539,6 +1539,13 @@ out_unlock:
 	return err;
 }
 
+static int ipip_gro_complete(struct sk_buff *skb, int nhoff)
+{
+	skb->encapsulation = 1;
+	skb_shinfo(skb)->gso_type |= SKB_GSO_IPIP;
+	return inet_gro_complete(skb, nhoff);
+}
+
 int inet_ctl_sock_create(struct sock **sk, unsigned short family,
 			 unsigned short type, unsigned char protocol,
 			 struct net *net)
@@ -1757,6 +1764,8 @@ static const struct net_offload ipip_offload = {
 		.gso_segment	= inet_gso_segment,
 		.gro_receive	= ipip_gro_receive,
 		.gro_complete	= inet_gro_complete,
+		.gro_receive	= inet_gro_receive,
+		.gro_complete	= ipip_gro_complete,
 	},
 };
 
