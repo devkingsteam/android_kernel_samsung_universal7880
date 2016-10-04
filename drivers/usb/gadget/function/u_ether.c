@@ -1040,8 +1040,6 @@ static netdev_tx_t eth_start_xmit(struct sk_buff *skb,
 			req->no_interrupt = 1;
 		}
 	} else {
-		req->no_interrupt = 0;
-	}
 	retval = usb_ep_queue(in, req, GFP_ATOMIC);
 	switch (retval) {
 	default:
