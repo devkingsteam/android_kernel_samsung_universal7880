@@ -548,7 +548,7 @@ static int acm_notify_serial_state(struct f_acm *acm)
 		DBG(cdev, "acm ttyGS%d serial state %04x\n",
 				acm->port_num, acm->serial_state);
 		status = acm_cdc_notify(acm, USB_CDC_NOTIFY_SERIAL_STATE,
-				0, &acm->serial_state, sizeof(acm->serial_state));
+				0, &serial_state, sizeof(acm->serial_state));
 	} else {
 		acm->pending = true;
 		status = 0;
