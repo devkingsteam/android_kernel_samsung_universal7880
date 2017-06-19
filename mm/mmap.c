@@ -2233,7 +2233,7 @@ int expand_upwards(struct vm_area_struct *vma, unsigned long address)
 	next = vma->vm_next;
 	if (next && next->vm_start < gap_addr) {
 		if (!(next->vm_flags & VM_GROWSUP))
-		return -ENOMEM;
+			return -ENOMEM;
 		/* Check that both stack segments have the same anon_vma? */
 	}
 
