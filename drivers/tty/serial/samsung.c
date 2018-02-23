@@ -1794,6 +1794,11 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
 	if (ourport->port.line != port_index)
 		ourport = exynos_serial_default_port(port_index);
 
+	if (index >= ARRAY_SIZE(s3c24xx_serial_ports)) {
+		dev_err(&pdev->dev, "serial%d out of range\n", index);
+		return -EINVAL;
+	}
+
 	ourport->drv_data = s3c24xx_get_driver_data(pdev);
 	if (!ourport->drv_data) {
 		dev_err(&pdev->dev, "could not find driver data\n");
