@@ -92,7 +92,11 @@ EXPORT_SYMBOL_GPL(audit_enabled);
 
 // [ SEC_SELINUX_PORTING_COMMON
 /* Default state when kernel boots without any parameters. */
+#ifdef CONFIG_SECURITY_SEC_SELINUX
 static u32	audit_default = 1;
+#else
+static u32	audit_default = AUDIT_OFF;
+#endif
 // ] SEC_SELINUX_PORTING_COMMON
 
 /* If auditing cannot proceed, audit_failure selects what happens. */
