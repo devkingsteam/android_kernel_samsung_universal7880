@@ -35,10 +35,8 @@
 #include "classmap.h"
 
 // [ SEC_SELINUX_PORTING_COMMON
-#ifdef CONFIG_SECURITY_SEC_SELINUX
 #ifdef SEC_SELINUX_DEBUG
 #include <linux/signal.h>
-#endif
 #endif
 // ] SEC_SELINUX_PORTING_COMMON
 
@@ -999,7 +997,6 @@ static noinline int avc_denied(u32 ssid, u32 tsid,
 		return -EACCES;
 
 // [ SEC_SELINUX_PORTING_COMMON
-#ifdef CONFIG_SECURITY_SEC_SELINUX
 #ifdef SEC_SELINUX_DEBUG
 
         /* SEC_SELINUX : denied && auditallow means "never happen" at current sepolicy. Valid Enforcing denial only. */
@@ -1049,11 +1046,8 @@ static noinline int avc_denied(u32 ssid, u32 tsid,
 	}
 #endif
 
-#ifdef CONFIG_SECURITY_SELINUX_ALWAYS_ENFORCE
+#ifdef CONFIG_ALWAYS_ENFORCE
 	if (!(avd->flags & AVD_FLAGS_PERMISSIVE))
-#else
-	if (selinux_enforcing && !(avd->flags & AVD_FLAGS_PERMISSIVE))
-#endif
 #else
 	if (selinux_enforcing && !(avd->flags & AVD_FLAGS_PERMISSIVE))
 #endif
