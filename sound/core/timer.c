@@ -504,6 +504,10 @@ static int snd_timer_start_slave(struct snd_timer_instance *timeri,
 /* stop/pause a master timer */
 static int snd_timer_stop1(struct snd_timer_instance *timeri, bool stop)
 {
+	struct snd_timer *timer;
+	int result = 0;
+	unsigned long flags;
+
 	timer = timeri->timer;
 	if (!timer)
 		return -EINVAL;
