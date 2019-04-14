@@ -73,7 +73,7 @@ static int get_v4l2_window32(struct v4l2_window __user *kp, struct
 	    copy_in_user(&kp->w, &up->w, sizeof(up->w)) ||
 	    convert_in_user(&up->field, &kp->field) ||
 	    convert_in_user(&up->chromakey, &kp->chromakey) ||
-	    convert_in_user(global_alpha, &up->global_alpha)) ||
+	    convert_in_user(&kp->global_alpha, &up->global_alpha) ||
 	    get_user(clipcount, &up->clipcount) ||
 	    put_user(clipcount, &kp->clipcount))
 		return -EFAULT;
@@ -113,8 +113,8 @@ static int put_v4l2_window32(struct v4l2_window __user *kp, struct v4l2_window32
 	if (copy_in_user(&up->w, &kp->w, sizeof(kp->w)) ||
 	    convert_in_user(&kp->field, &up->field) ||
 	    convert_in_user(&kp->chromakey, &up->chromakey) ||
-	    convert_in_user(&kp->clipcount, &up->clipcount)) ||
-	    put_user(&kp->global_alpha, &up->global_alpha))
+	    convert_in_user(&kp->clipcount, &up->clipcount) ||
+	    convert_in_user(&kp->global_alpha, &up->global_alpha))
 		return -EFAULT;
 	return 0;
 }
@@ -705,12 +705,6 @@ static inline int ctrl_is_pointer(u32 id)
 	default:
 		return 0;
 	}
-
-	if (!ops || !ops->vidioc_query_ext_ctrl)
-		return false;
-
-	return !ops->vidioc_query_ext_ctrl(file, fh, &qec) &&
-		(qec.flags & V4L2_CTRL_FLAG_HAS_PAYLOAD);
 }
 
 static int bufsize_v4l2_ext_controls32(struct v4l2_ext_controls32 __user *up)
@@ -750,7 +744,6 @@ static int get_v4l2_ext_controls32(struct v4l2_ext_controls __user *kp, struct
 	if (!access_ok(VERIFY_READ, ucontrols, count * sizeof(*ucontrols)))
 		return -EFAULT;
 	if (aux_space < count * sizeof(*kcontrols))
-		       n * sizeof(*ucontrols)))
 		return -EFAULT;
 	kcontrols = aux_buf;
 	if (put_user((__force struct v4l2_ext_control *)kcontrols,
@@ -862,7 +855,7 @@ static int get_v4l2_edid32(struct v4l2_edid __user *kp, struct v4l2_edid32 __use
 {
 	compat_uptr_t tmp;
 
-	if (!access_ok(VERIFY_READ, up, sizeof(üp)) ||
+	if (!access_ok(VERIFY_READ, up, sizeof(*up)) ||
 	    convert_in_user(&up->pad, &kp->pad) ||
 	    convert_in_user(&up->start_block, &kp->start_block) ||
 	    convert_in_user(&up->blocks, &kp->blocks) ||
