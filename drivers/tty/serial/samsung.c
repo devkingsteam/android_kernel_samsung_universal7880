@@ -2531,6 +2531,11 @@ static struct s3c24xx_serial_drv_data exynos_serial_drv_data = {
 	.fifosize = { 0, },
 };
 
+static struct s3c24xx_serial_drv_data exynos5433_serial_drv_data = {
+	EXYNOS_COMMON_SERIAL_DRV_DATA,
+	.fifosize = { 64, 256, 16, 256 },
+};
+
 #define EXYNOS4210_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos4210_serial_drv_data)
 #define EXYNOS5433_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos5433_serial_drv_data)
 #define EXYNOS_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos_serial_drv_data)
@@ -2538,11 +2543,6 @@ static struct s3c24xx_serial_drv_data exynos_serial_drv_data = {
 #define EXYNOS4210_SERIAL_DRV_DATA (kernel_ulong_t)NULL
 #define EXYNOS5433_SERIAL_DRV_DATA (kernel_ulong_t)NULL
 #define EXYNOS_SERIAL_DRV_DATA (kernel_ulong_t)NULL
-
-static struct s3c24xx_serial_drv_data exynos5433_serial_drv_data = {
-	EXYNOS_COMMON_SERIAL_DRV_DATA,
-	.fifosize = { 64, 256, 16, 256 },
-};
 
 #endif
 
