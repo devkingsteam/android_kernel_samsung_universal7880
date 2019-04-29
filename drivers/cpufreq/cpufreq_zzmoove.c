@@ -3035,9 +3035,10 @@ static ssize_t store_sampling_rate_idle_delay(struct kobject *a, struct attribut
 #endif /* ENABLE_PROFILES_SUPPORT */
 	    return -EINVAL;
 
-	if (input == 0)
+	if (input == 0) {
 	    sampling_rate_step_up_delay = 0;
 	    sampling_rate_step_down_delay = 0;
+	}
 
 #ifdef ENABLE_PROFILES_SUPPORT
 	// ZZ: set profile number to 0 and profile name to custom mode if value has changed
@@ -7742,7 +7743,7 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 #endif /* ENABLE_SNAP_THERMAL_SUPPORT */
 
 	    // ZZ: Sampling down momentum - if momentum is inactive switch to 'down_skip' method
-	    if (zz_sampling_down_max_mom == 0 && zz_sampling_down_factor > 1)
+	    if (zz_sampling_down_max_mom == 0 && zz_sampling_down_factor > 1) {
 		this_dbs_info->down_skip = 0;
 
 		// ZZ: Frequency Limit: if we are at freq_limit break out early
@@ -7759,13 +7760,14 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 				return;
 #endif /* ENABLE_MUSIC_LIMITS */
 		}
+	    }
 
 	    // if we are already at full speed then break out early but not if freq limit is set
 	    if (policy->cur == policy->max && dbs_tuners_ins.freq_limit == 0)	// ZZ: changed check from reqested_freq to current freq (DerTeufel1980)
 		return;
 
 	    // ZZ: Sampling down momentum - if momentum is active and we are switching to max speed, apply sampling_down_factor
-	    if (zz_sampling_down_max_mom != 0 && policy->cur < policy->max)
+	    if (zz_sampling_down_max_mom != 0 && policy->cur < policy->max) {
 		this_dbs_info->rate_mult = zz_sampling_down_factor;
 
 		this_dbs_info->requested_freq = zz_get_next_freq(policy->cur, 1, max_load);
@@ -7789,6 +7791,7 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 				this_dbs_info->requested_freq = dbs_tuners_ins.freq_limit;
 #endif /* ENABLE_MUSIC_LIMITS */
 		}
+	    }
 
 #ifdef ENABLE_INPUTBOOSTER
 		if (flg_ctr_inputboost_punch > 0 && this_dbs_info->requested_freq < dbs_tuners_ins.inputboost_punch_freq) {
@@ -8788,7 +8791,7 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 		    unsigned int latency;
 		    // policy latency is in nS. Convert it to uS first
 		    latency = policy->cpuinfo.transition_latency / 1000;
-		    if (latency == 0)
+		    if (latency == 0) {
 			latency = 1;
 
 			rc = sysfs_create_group(cpufreq_global_kobject,
@@ -8849,6 +8852,7 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 				rc = 0;
 			}
 #endif /* ENABLE_INPUTBOOST */
+		    }
 		}
 		mutex_unlock(&dbs_mutex);
 		dbs_timer_init(this_dbs_info);
