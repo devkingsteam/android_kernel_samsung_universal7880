@@ -2274,11 +2274,12 @@ static void jack_mic_delay_work(struct work_struct *work)
 		msleep(cod3026x->mic_det_delay);
 
 		/* read adc for mic detect */
-		if (cod3026x->is_suspend)
+		if (cod3026x->is_suspend) {
 			regcache_cache_only(cod3026x->regmap, false);
 
 			stat1 = snd_soc_read(cod3026x->codec, COD3026X_0B_STATUS1);
 			dev_err(cod3026x->dev, " %s reg 0x0B stat1 %02x \n" , __func__, stat1);
+		}
 
 		if (cod3026x->is_suspend)
 			regcache_cache_only(cod3026x->regmap, true);

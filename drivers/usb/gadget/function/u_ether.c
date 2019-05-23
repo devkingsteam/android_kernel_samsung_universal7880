@@ -791,7 +791,7 @@ static int alloc_tx_buffer(struct eth_dev *dev)
 #endif
 	list_for_each(act, &dev->tx_reqs) {
 		req = container_of(act, struct usb_request, list);
-		if (!req->buf)
+		if (!req->buf) {
 			req->buf = kmalloc(dev->tx_req_bufsize,
 						GFP_ATOMIC);
 			if (!req->buf)
@@ -803,6 +803,7 @@ static int alloc_tx_buffer(struct eth_dev *dev)
 				DEBUG_NCM(KERN_ERR"usb: request(%p) req->len(%d) \n",req,req->length);
 			}
 #endif
+		}
 	}
 	return 0;
 
@@ -1039,8 +1040,6 @@ static netdev_tx_t eth_start_xmit(struct sk_buff *skb,
 		} else {
 			req->no_interrupt = 1;
 		}
-	} else {
-		req->no_interrupt = 0;
 	}
 	retval = usb_ep_queue(in, req, GFP_ATOMIC);
 	switch (retval) {

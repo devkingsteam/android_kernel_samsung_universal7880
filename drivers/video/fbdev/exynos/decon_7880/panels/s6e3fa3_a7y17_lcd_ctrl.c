@@ -1900,8 +1900,8 @@ exit:
 
 static int dsim_panel_displayon(struct dsim_device *dsim)
 {
-	display_on = true;
 	struct lcd_info *lcd = dsim->priv.par;
+	display_on = true;
 
 	dev_info(&lcd->ld->dev, "+ %s: %d\n", __func__, lcd->state);
 

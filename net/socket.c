@@ -2053,14 +2053,12 @@ static int ___sys_sendmsg(struct socket *sock, struct msghdr __user *msg,
 	int err, ctl_len, total_len;
 
 	err = -EFAULT;
-	if (MSG_CMSG_COMPAT & flags) {
-		if (get_compat_msghdr(msg_sys, msg_compat))
-			return -EFAULT;
-	} else {
+	if (MSG_CMSG_COMPAT & flags)
+		err = get_compat_msghdr(msg_sys, msg_compat);
+	else
 		err = copy_msghdr_from_user(msg_sys, msg);
-		if (err)
-			return err;
-	}
+	if (err)
+		return err;
 
 	if (msg_sys->msg_iovlen > UIO_FASTIOV) {
 		err = -EMSGSIZE;
@@ -2265,14 +2263,12 @@ static int ___sys_recvmsg(struct socket *sock, struct msghdr __user *msg,
 	struct sockaddr __user *uaddr;
 	int __user *uaddr_len;
 
-	if (MSG_CMSG_COMPAT & flags) {
-		if (get_compat_msghdr(msg_sys, msg_compat))
-			return -EFAULT;
-	} else {
+	if (MSG_CMSG_COMPAT & flags)
+		err = get_compat_msghdr(msg_sys, msg_compat);
+	else
 		err = copy_msghdr_from_user(msg_sys, msg);
-		if (err)
-			return err;
-	}
+	if (err)
+		return err;
 
 	if (msg_sys->msg_iovlen > UIO_FASTIOV) {
 		err = -EMSGSIZE;
@@ -2395,8 +2391,10 @@ int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
 		return err;
 
 	err = sock_error(sock->sk);
-	if (err)
+	if (err) {
+		datagrams = err;
 		goto out_put;
+	}
 
 	entry = mmsg;
 	compat_entry = (struct compat_mmsghdr __user *)mmsg;
@@ -2956,9 +2954,14 @@ static int ethtool_ioctl(struct net *net, struct compat_ifreq __user *ifr32)
 		    copy_in_user(&rxnfc->fs.ring_cookie,
 				 &compat_rxnfc->fs.ring_cookie,
 				 (void __user *)(&rxnfc->fs.location + 1) -
-				 (void __user *)&rxnfc->fs.ring_cookie) ||
-		    copy_in_user(&rxnfc->rule_cnt, &compat_rxnfc->rule_cnt,
-				 sizeof(rxnfc->rule_cnt)))
+				 (void __user *)&rxnfc->fs.ring_cookie))
+			return -EFAULT;
+		if (ethcmd == ETHTOOL_GRXCLSRLALL) {
+			if (put_user(rule_cnt, &rxnfc->rule_cnt))
+				return -EFAULT;
+		} else if (copy_in_user(&rxnfc->rule_cnt,
+					&compat_rxnfc->rule_cnt,
+					sizeof(rxnfc->rule_cnt)))
 			return -EFAULT;
 	}
 

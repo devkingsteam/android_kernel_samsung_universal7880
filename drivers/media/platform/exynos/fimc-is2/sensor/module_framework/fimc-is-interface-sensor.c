@@ -1661,11 +1661,12 @@ int copy_sensor_ctl(struct fimc_is_sensor_interface *itf,
 	if (shot != NULL) {
 		sensor_ctl->ctl_frame_number = shot->dm.request.frameCount;
 		sensor_ctl->cur_cam20_sensor_ctrl = shot->ctl.sensor;
-
+	}
+	
 	if (shot->uctl.companionUd.wdr_mode == COMPANION_WDR_ON ||
 			shot->uctl.companionUd.wdr_mode == COMPANION_WDR_AUTO)
 		itf->cis_mode = ITF_CIS_SMIA_WDR;
-	else
+	else {
 		itf->cis_mode = ITF_CIS_SMIA;
 
 		/* set frame rate : Limit of max frame duration
