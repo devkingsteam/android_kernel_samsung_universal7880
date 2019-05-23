@@ -14,7 +14,6 @@
 #include <linux/backlight.h>
 #include <linux/of_device.h>
 #include <video/mipi_display.h>
-#include <linux/display_state.h>
 #include "../dsim.h"
 #include "dsim_panel.h"
 #include "../decon.h"
@@ -38,12 +37,6 @@
 
 #ifdef CONFIG_DISPLAY_USE_INFO
 #include "dpui.h"
-
-bool display_on = true;
-bool is_display_on()
-{
-	return display_on;
-}
 
 #define	DPUI_VENDOR_NAME	"SDC"
 #if defined(CONFIG_PANEL_S6E3FA3_A7Y17)
@@ -1901,7 +1894,6 @@ exit:
 static int dsim_panel_displayon(struct dsim_device *dsim)
 {
 	struct lcd_info *lcd = dsim->priv.par;
-	display_on = true;
 
 	dev_info(&lcd->ld->dev, "+ %s: %d\n", __func__, lcd->state);
 
@@ -1937,7 +1929,6 @@ static int dsim_panel_suspend(struct dsim_device *dsim)
 	mutex_unlock(&lcd->lock);
 
 	dev_info(&lcd->ld->dev, "- %s: %d, %d\n", __func__, lcd->state, lcd->connected);
-	display_on = false;
 
 exit:
 	return 0;
